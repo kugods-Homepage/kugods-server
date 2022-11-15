@@ -11,11 +11,18 @@ datasource db {
 }
 
 model User{
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  phone String @unique
+  id    Int    @id  @default(autoincrement())
   student_id Int @unique
   name  String
   accessCode String @unique
-  level String? //없으면 default
+  level String?
+  phone String? @unique
+  userAccount User_Account?
+}
+model User_Account{
+  id    Int     @default(autoincrement()) @id
+  email String  @unique
+  password String
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
 }
