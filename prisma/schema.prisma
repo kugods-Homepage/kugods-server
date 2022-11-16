@@ -10,19 +10,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
-  id    Int    @id  @default(autoincrement())
-  student_id Int @unique
-  name  String
-  accessCode String @unique
-  level String?
-  phone String? @unique
-  userAccount User_Account?
+model User {
+  id          String       @id @default(uuid())
+  studentId   Int          @unique @map("student_id")
+  name        String
+  phone       String
+  userAccount UserAccount?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  @@map("user")
 }
-model User_Account{
-  id    Int     @default(autoincrement()) @id
-  email String  @unique
-  password String
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
+
+model UserAccount {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  position  Position
+  isAdmin   Boolean? @map("is_admin")
+  user      User     @relation(fields: [uuid], references: [id])
+  uuid      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_account")
+}
+
+enum Position {
+  Lead
+  Core
+  Member
+  Junior
 }
