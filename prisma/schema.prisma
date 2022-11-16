@@ -15,6 +15,7 @@ model User {
   studentId   Int          @unique @map("student_id")
   name        String
   phone       String
+  position    UserPosition
   userAccount UserAccount?
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
@@ -26,19 +27,20 @@ model UserAccount {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
-  position  Position
-  isAdmin   Boolean? @map("is_admin")
-  user      User     @relation(fields: [uuid], references: [id])
-  uuid      String   @unique
+  isAdmin   Boolean  @default(false) @map("is_admin")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user_account")
 }
 
-enum Position {
-  Lead
-  Core
-  Member
-  Junior
+enum UserPosition {
+  LEAD
+  CORE
+  MEMBER
+  JUNIOR
+
+  @@map("user_position")
 }
