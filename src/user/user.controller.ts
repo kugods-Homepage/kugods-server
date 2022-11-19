@@ -34,7 +34,7 @@ export class UserController {
           callback(
             new HttpException(
               {
-                error: '.xlsx파일을 업로드해주세요.',
+                message: '.xlsx파일을 업로드해주세요.',
               },
               HttpStatus.BAD_REQUEST,
             ),

@@ -34,18 +34,19 @@ export class UserService {
     const rows = XLSX.utils.sheet_to_json(sheet, {
       defval: null, //defaultValue: null
     });
+    console.log(rows);
 
     for (const row of rows) {
       //DAO 형식으로 맞추기
       const values = Object.keys(row).map((key) => row[key]);
       const [name, studentId, phone, xlsxPosition] = values;
 
-      const xlsxEntrollDao: XlsxEnrollDao = { name: name, studentId: studentId, phone: phone, position: 'JUNIOR' };
+      const xlsxEntrollDao = new XlsxEnrollDao(name, studentId, phone);
 
-      if (xlsxPosition === '리드') xlsxEntrollDao.position = 'LEAD';
-      else if (xlsxPosition === '코어') xlsxEntrollDao.position = 'CORE';
-      else if (xlsxPosition === '멤버') xlsxEntrollDao.position = 'MEMBER';
-      else if (xlsxPosition === '주니어') xlsxEntrollDao.position = 'JUNIOR';
+      if (xlsxPosition === '리드') xlsxEntrollDao.setPosition('LEAD');
+      else if (xlsxPosition === '코어') xlsxEntrollDao.setPosition('CORE');
+      else if (xlsxPosition === '멤버') xlsxEntrollDao.setPosition('MEMBER');
+      else if (xlsxPosition === '주니어') xlsxEntrollDao.setPosition('JUNIOR');
 
       console.log(xlsxEntrollDao);
 

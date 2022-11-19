@@ -1,20 +1,28 @@
-import { IsNotEmpty, IsPhoneNumber, IsString, MaxLength } from 'class-validator';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export class XlsxEnrollDao {
-  @IsString()
-  @IsNotEmpty()
+  constructor(name: string, studentId: number, phone: string) {
+    if (studentId >= 1000000000 && studentId <= 9999999999) {
+      this.studentId = studentId;
+    } else {
+      throw new HttpException(
+        {
+          message: '학번 값이 잘못 되었습니다.',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    this.name = name;
+    this.phone = phone;
+  }
+
+  setPosition(position: 'LEAD' | 'CORE' | 'MEMBER' | 'JUNIOR') {
+    this.position = position;
+  }
+
   public name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(10)
   public studentId: number;
-
-  @IsPhoneNumber()
-  @IsNotEmpty()
   public phone: string;
-
-  @IsString()
-  @IsNotEmpty()
   public position: 'LEAD' | 'CORE' | 'MEMBER' | 'JUNIOR';
 }
