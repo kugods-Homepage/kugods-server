@@ -4,6 +4,7 @@ import { TestPayload } from './payload/test.payload';
 import { TestDto } from './dto/test.dto';
 import { TestType } from './types/test.type';
 import * as XLSX from 'xlsx';
+import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 
 @Injectable()
 export class UserService {
@@ -35,11 +36,21 @@ export class UserService {
     });
 
     for (const row of rows) {
-      //DB에 등록
-      console.log('1 row', row);
-      //const values = Object.keys(row).map((key) => row[key]);
-      //const [name, studentId, phone, position] = values;
-      //this.userRepository.enroll();
+      //DAO 형식으로 맞추기
+      const values = Object.keys(row).map((key) => row[key]);
+      const [name, studentId, phone, xlsxPosition] = values;
+
+      const xlsxEntrollDao: XlsxEnrollDao = { name: name, studentId: studentId, phone: phone, position: 'JUNIOR' };
+
+      if (xlsxPosition === '리드') xlsxEntrollDao.position = 'LEAD';
+      else if (xlsxPosition === '코어') xlsxEntrollDao.position = 'CORE';
+      else if (xlsxPosition === '멤버') xlsxEntrollDao.position = 'MEMBER';
+      else if (xlsxPosition === '주니어') xlsxEntrollDao.position = 'JUNIOR';
+
+      console.log(xlsxEntrollDao);
+
+      //DB 등록하기
+      this.userRepository.enroll(xlsxEntrollDao);
     }
 
     return true;
