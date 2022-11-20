@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { TestPayload } from './payload/test.payload';
 import { TestDto } from './dto/test.dto';
@@ -22,38 +22,35 @@ export class UserService {
     return TestDto.of(data);
   }
 
-  async enrollByXlsx(file: Express.Multer.File) {
-    console.log(file);
-
-    //첫 번째 시트에 접근
+  async enrollByXlsx(file: Express.Multer.File): Promise<void> {
+    // 엑셀 데이터 가져오기
     const workbook = XLSX.read(file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const sheet = workbook.Sheets[sheetName];
-
-    //엑셀 데이터 가져오기
-    const rows = XLSX.utils.sheet_to_json(sheet, {
+    const xlsxRows = XLSX.utils.sheet_to_json(sheet, {
       defval: null, //defaultValue: null
     });
-    console.log(rows);
+    console.log(xlsxRows);
 
-    for (const row of rows) {
-      //DAO 형식으로 맞추기
+    // DAO 형식으로 맞추기
+    const xlsxEnrollData: XlsxEnrollDao[] = [];
+    for (const row of xlsxRows) {
       const values = Object.keys(row).map((key) => row[key]);
       const [name, studentId, phone, xlsxPosition] = values;
 
-      const xlsxEntrollDao = new XlsxEnrollDao(name, studentId, phone);
+      const data = new XlsxEnrollDao(name, studentId, phone);
 
-      if (xlsxPosition === '리드') xlsxEntrollDao.setPosition('LEAD');
-      else if (xlsxPosition === '코어') xlsxEntrollDao.setPosition('CORE');
-      else if (xlsxPosition === '멤버') xlsxEntrollDao.setPosition('MEMBER');
-      else if (xlsxPosition === '주니어') xlsxEntrollDao.setPosition('JUNIOR');
+      if (xlsxPosition === '리드') data.setPosition('LEAD');
+      else if (xlsxPosition === '코어') data.setPosition('CORE');
+      else if (xlsxPosition === '멤버') data.setPosition('MEMBER');
+      else if (xlsxPosition === '주니어') data.setPosition('JUNIOR');
+      else throw new BadRequestException('회원 구분이 잘못되었습니다.');
 
-      console.log(xlsxEntrollDao);
-
-      //DB 등록하기
-      this.userRepository.enroll(xlsxEntrollDao);
+      console.log(data);
+      xlsxEnrollData.push(data);
     }
 
-    return true;
+    // DB 등록하기
+    return this.userRepository.enroll(xlsxEnrollData);
   }
 }

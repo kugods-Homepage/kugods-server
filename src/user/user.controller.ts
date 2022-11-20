@@ -24,7 +24,7 @@ export class UserController {
   })
   @Post('/xlsx')
   @UseInterceptors(FileInterceptor('file', xlsxEnrollOption))
-  async enrollByXlsx(@UploadedFile() file: Express.Multer.File) {
+  async enrollByXlsx(@UploadedFile() file: Express.Multer.File): Promise<void> {
     return this.userService.enrollByXlsx(file);
   }
 }

@@ -6,7 +6,7 @@ import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async enroll(data: XlsxEnrollDao[]) {
+  async enroll(data: XlsxEnrollDao[]): Promise<void> {
     await this.prisma.user.createMany({ data: data, skipDuplicates: true });
   }
 }
