@@ -1,10 +1,10 @@
-import { Body, Controller, HttpException, HttpStatus, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { TestDto } from './dto/test.dto';
 import { TestPayload } from './payload/test.payload';
-import { memoryStorage } from 'multer';
+import xlsxEnrollOption from 'src/utils/multer/xlsx-enroll.option';
 
 @ApiTags('User API')
 @Controller('user')
@@ -23,29 +23,7 @@ export class UserController {
     summary: '합격자 정보가 담긴 엑셀 파일 업로드를 통해 서버에 정보 등록',
   })
   @Post('/xlsx')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      //파일 확장자 처리
-      fileFilter: (request, file, callback) => {
-        console.log('fileFilter...');
-        if (file.mimetype.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
-          callback(null, true);
-        } else {
-          callback(
-            new HttpException(
-              {
-                message: '.xlsx파일을 업로드해주세요.',
-              },
-              HttpStatus.BAD_REQUEST,
-            ),
-            false,
-          );
-        }
-      },
-      //메모리에 저장
-      storage: memoryStorage(),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file', xlsxEnrollOption))
   async enrollByXlsx(@UploadedFile() file: Express.Multer.File) {
     return this.userService.enrollByXlsx(file);
   }
