@@ -42,19 +42,12 @@ export class UserService {
       const values = Object.keys(row).map((key) => row[key]);
       const [name, studentId, phone, xlsxPosition] = values;
 
-      if (!(xlsxPosition === '리드' || xlsxPosition === '코어' || xlsxPosition === '멤버' || xlsxPosition === '주니어'))
-        throw new BadRequestException('회원 구분이 잘못되었습니다.');
-
-      const xlsxEnrollData: XlsxEnrollDao = {
-        name: name,
-        studentId: studentId,
-        phone: phone,
-        position: UserPosition[xlsxPosition],
-      };
-
+      const xlsxEnrollData = new XlsxEnrollDao(name, studentId, phone, UserPosition[xlsxPosition]);
       console.log(xlsxEnrollData);
-      validateOrReject(xlsxEnrollData).catch(() => {
-        throw new BadRequestException('엑셀 파일의 정보에 에러가 있습니다.');
+
+      validateOrReject(xlsxEnrollData).catch((err) => {
+        console.log(err);
+        throw new BadRequestException('엑셀 파일의 정보가 틀렸거나 양식에 어긋납니다.');
       });
 
       xlsxEnrollDataArray.push(xlsxEnrollData);
