@@ -4,7 +4,6 @@ import { memoryStorage } from 'multer';
 const xlsxEnrollOption = {
   //파일 확장자 처리
   fileFilter: (request, file, callback) => {
-    console.log('fileFilter...');
     if (file.mimetype.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
       callback(null, true);
     } else {

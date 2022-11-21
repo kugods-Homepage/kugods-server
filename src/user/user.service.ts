@@ -34,7 +34,6 @@ export class UserService {
     const xlsxRows = XLSX.utils.sheet_to_json(sheet, {
       defval: null, //defaultValue: null
     });
-    console.log(xlsxRows);
 
     // XLSX -> JSON DAO 형식으로 맞추기 (with validtaion)
     const xlsxEnrollDataArray: XlsxEnrollDao[] = [];
