@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { memoryStorage } from 'multer';
 
-const xlsxEnrollOption = {
+export const xlsxEnrollOption = {
   //파일 확장자 처리
   fileFilter: (request, file, callback) => {
     if (file.mimetype.match('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
@@ -13,5 +13,3 @@ const xlsxEnrollOption = {
   //메모리에 저장
   storage: memoryStorage(),
 };
-
-export default xlsxEnrollOption;

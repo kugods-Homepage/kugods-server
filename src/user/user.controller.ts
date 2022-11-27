@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { TestDto } from './dto/test.dto';
 import { TestPayload } from './payload/test.payload';
-import xlsxEnrollOption from 'src/utils/multer/xlsx-enroll.option';
+import { xlsxEnrollOption } from 'src/utils/multer/xlsx-enroll.option';
 
 @ApiTags('User API')
 @Controller('user')
