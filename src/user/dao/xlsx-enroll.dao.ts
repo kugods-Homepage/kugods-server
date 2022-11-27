@@ -1,12 +1,16 @@
+import { BadRequestException } from '@nestjs/common';
 import { UserPosition } from '@prisma/client';
-import { IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Max, Min } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Max, Min } from 'class-validator';
 
-// 프론트나 API 명세에 들어가는 내용이 아니므로 swagger는 생략
 export class XlsxEnrollDao {
   constructor(name: string, studentId: number, phone: string, position: UserPosition) {
     this.name = name;
     this.studentId = studentId;
-    this.phone = '+82' + phone.substring(1);
+    if (typeof phone !== 'string') {
+      throw new BadRequestException('핸드폰 번호가 양식에 맞지 않습니다.');
+    } else {
+      this.phone = '+82' + phone.substring(1);
+    }
     this.position = position;
   }
 
@@ -24,7 +28,7 @@ export class XlsxEnrollDao {
   @IsNotEmpty()
   public phone: string;
 
-  @IsString()
+  @IsEnum(UserPosition)
   @IsNotEmpty()
   public position: UserPosition;
 }
