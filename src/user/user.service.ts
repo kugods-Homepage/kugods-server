@@ -5,8 +5,8 @@ import { TestDto } from './dto/test.dto';
 import { TestType } from './types/test.type';
 import * as XLSX from 'xlsx';
 import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
-import { UserPosition } from './types/user-position.type';
-import { validateOrReject } from 'class-validator';
+import { UserPosition } from './types/user-position.enum';
+import { validate } from 'class-validator';
 
 @Injectable()
 export class UserService {
@@ -25,8 +25,6 @@ export class UserService {
   }
 
   async enrollByXlsx(file: Express.Multer.File): Promise<void> {
-    console.log(file);
-
     // 엑셀 데이터 가져오기
     const workbook = XLSX.read(file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
@@ -35,24 +33,32 @@ export class UserService {
       defval: null, //defaultValue: null
     });
 
-    // XLSX -> JSON DAO 형식으로 맞추기 (with validtaion)
-    const xlsxEnrollDataArray: XlsxEnrollDao[] = [];
-    for (const row of xlsxRows) {
+    // XLSX -> JSON DAO 형식으로 맞추기
+    const xlsxEnrollData: XlsxEnrollDao[] = xlsxRows.map((row) => {
       const values = Object.keys(row).map((key) => row[key]);
       const [name, studentId, phone, xlsxPosition] = values;
+      const data = new XlsxEnrollDao(name, studentId, phone, UserPosition[xlsxPosition]);
+      return data;
+    });
 
-      const xlsxEnrollData = new XlsxEnrollDao(name, studentId, phone, UserPosition[xlsxPosition]);
-      console.log(xlsxEnrollData);
+    // validate DAO
+    for (const data of xlsxEnrollData) {
+      const validationError = await validate(data);
+      if (validationError.length > 0) {
+        const errorDetail = validationError.map((err) => {
+          return err.constraints;
+        });
 
-      validateOrReject(xlsxEnrollData).catch((err) => {
-        console.log(err);
-        throw new BadRequestException('엑셀 파일의 정보가 틀렸거나 양식에 어긋납니다.');
-      });
-
-      xlsxEnrollDataArray.push(xlsxEnrollData);
+        throw new BadRequestException({
+          statusCode: 400,
+          message: `엑셀 파일의 정보가 틀렸거나 양식에 어긋납니다.`,
+          error: 'Bad Request',
+          Description: errorDetail,
+        });
+      }
     }
 
     // DB 등록하기
-    return this.userRepository.enroll(xlsxEnrollDataArray);
+    return await this.userRepository.enroll(xlsxEnrollData);
   }
 }
