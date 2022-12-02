@@ -8,9 +8,8 @@ export class XlsxEnrollDao {
     this.studentId = studentId;
     if (typeof phone !== 'string') {
       throw new BadRequestException('핸드폰 번호가 양식에 맞지 않습니다.');
-    } else {
-      this.phone = '+82' + phone.substring(1);
     }
+    this.phone = '+82' + phone.substring(1);
     this.position = position;
   }
 

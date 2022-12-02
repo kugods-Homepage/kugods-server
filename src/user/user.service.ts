@@ -37,28 +37,25 @@ export class UserService {
     const xlsxEnrollData: XlsxEnrollDao[] = xlsxRows.map((row) => {
       const values = Object.keys(row).map((key) => row[key]);
       const [name, studentId, phone, xlsxPosition] = values;
-      const data = new XlsxEnrollDao(name, studentId, phone, UserPosition[xlsxPosition]);
-      return data;
+      return new XlsxEnrollDao(name, studentId, phone, UserPosition[xlsxPosition]);
     });
 
     // validate DAO
     for (const data of xlsxEnrollData) {
       const validationError = await validate(data);
       if (validationError.length > 0) {
-        const errorDetail = validationError.map((err) => {
-          return err.constraints;
-        });
+        const errorDetail = validationError.map((err) => err.constraints);
 
         throw new BadRequestException({
           statusCode: 400,
           message: `엑셀 파일의 정보가 틀렸거나 양식에 어긋납니다.`,
           error: 'Bad Request',
-          Description: errorDetail,
+          description: errorDetail,
         });
       }
     }
 
     // DB 등록하기
-    return await this.userRepository.enroll(xlsxEnrollData);
+    return this.userRepository.enroll(xlsxEnrollData);
   }
 }
