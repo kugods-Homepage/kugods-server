@@ -16,7 +16,7 @@ model User {
   name        String
   phone       String
   position    UserPosition
-  isActive    Boolean      @defualt(true) @map("is_active")
+  isActive    Boolean      @default(true) @map("is_active")
   generation  Int
   userAccount UserAccount?
   createdAt   DateTime     @default(now()) @map("created_at")
