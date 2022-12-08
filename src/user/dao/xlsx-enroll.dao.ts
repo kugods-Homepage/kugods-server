@@ -3,7 +3,7 @@ import { UserPosition } from '@prisma/client';
 import { IsEnum, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, Max, Min } from 'class-validator';
 
 export class XlsxEnrollDao {
-  constructor(name: string, studentId: number, phone: string, position: UserPosition) {
+  constructor(name: string, studentId: number, phone: string, position: UserPosition, generation: number) {
     this.name = name;
     this.studentId = studentId;
     if (typeof phone !== 'string') {
@@ -11,6 +11,10 @@ export class XlsxEnrollDao {
     }
     this.phone = '+82' + phone.substring(1);
     this.position = position;
+    if(typeof generation !== 'number') {
+      throw new BadRequestException('기수가 양식에 맞지 않습니다.');
+    }
+    this.generation = Math.pow(2, generation-1);
   }
 
   @IsString()
@@ -30,4 +34,8 @@ export class XlsxEnrollDao {
   @IsEnum(UserPosition)
   @IsNotEmpty()
   public position: UserPosition;
+
+  @IsNumber()
+  @Min(1)
+  public generation: number;
 }

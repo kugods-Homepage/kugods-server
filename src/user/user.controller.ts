@@ -34,9 +34,9 @@ export class UserController {
       },
     },
   })
-  @ApiNoContentResponse()
+  @ApiCreatedResponse()
   @Post('/xlsx')
-  @HttpCode(204)
+  @HttpCode(201)
   @UseInterceptors(FileInterceptor('file', xlsxEnrollOption))
   async enrollByXlsx(@UploadedFile() file: Express.Multer.File): Promise<void> {
     return this.userService.enrollByXlsx(file);

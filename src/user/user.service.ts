@@ -33,11 +33,13 @@ export class UserService {
       defval: null, //defaultValue: null
     });
 
+    
     // XLSX -> JSON DAO 형식으로 맞추기
+    const generation = sheet['G3'].v;
     const xlsxEnrollData: XlsxEnrollDao[] = xlsxRows.map((row) => {
       const values = Object.keys(row).map((key) => row[key]);
       const [name, studentId, phone, xlsxPosition] = values;
-      return new XlsxEnrollDao(name, studentId, phone, UserPosition[xlsxPosition]);
+      return new XlsxEnrollDao(name, studentId, phone, UserPosition[xlsxPosition], generation);
     });
 
     // validate DAO
