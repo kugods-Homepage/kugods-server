@@ -73,8 +73,9 @@ export class UserService {
         .createHash('sha512')
         .update(studentId + this.config.get<string>('ACCESS_CODE_SALT'))
         .digest('hex');
+      const convertedPhone = '0' + phone.substring(3);
 
-      return { 이름: name, 학번: studentId, 전화번호: phone, 포지션: position, 승인코드: accessCode };
+      return { 이름: name, 학번: studentId, 전화번호: convertedPhone, 포지션: position, 승인코드: accessCode };
     });
 
     // 엑셀 파일 작성
