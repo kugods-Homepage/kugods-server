@@ -9,7 +9,6 @@ import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 import { UserPosition } from './types/user-position.enum';
 import { validate } from 'class-validator';
 import * as crypto from 'crypto';
-import { access } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -75,18 +74,19 @@ export class UserService {
         .update(studentId + this.config.get<string>('ACCESS_CODE_SALT'))
         .digest('hex');
 
-      return { name, studentId, phone, position, accessCode };
+      return { 이름: name, 학번: studentId, 전화번호: phone, 포지션: position, 승인코드: accessCode };
     });
-    console.log(userAccessCodeList);
 
     // 엑셀 파일 작성
     const workBook = XLSX.utils.book_new();
     const workSheet = XLSX.utils.json_to_sheet(userAccessCodeList);
     XLSX.utils.book_append_sheet(workBook, workSheet, '승인코드');
+    workSheet['!cols'] = [{ wpx: 75 }, { wpx: 100 }, { wpx: 125 }, { wpx: 75 }, { wpx: 500 }];
     const xlsxFile = XLSX.write(workBook, {
       bookType: 'xlsx',
       type: 'base64',
     });
+
     return xlsxFile;
   }
 }
