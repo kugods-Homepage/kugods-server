@@ -40,7 +40,7 @@ export class UserController {
     return this.userService.enrollByXlsx(file);
   }
 
-  @ApiOperation({ summary: '아직 가입되지 않은 유저들의 승인코드를 생성해서 내려줌' })
+  @ApiOperation({ summary: '유저들의 승인코드가 담긴 xlsx파일을 base64형태로 생성해서 내려줌' })
   @ApiOkResponse()
   @HttpCode(200)
   @Get('/access-code')
