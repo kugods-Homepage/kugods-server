@@ -44,7 +44,7 @@ export class UserController {
   @ApiOkResponse()
   @HttpCode(200)
   @Get('/access-code')
-  async getAccessCode() {
-    return this.userService.getAccessCode();
+  async generateXlsxWithAccessCode(): Promise<string> {
+    return this.userService.generateXlsxWithAccessCode();
   }
 }

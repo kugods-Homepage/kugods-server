@@ -62,19 +62,16 @@ export class UserService {
     return this.userRepository.enroll(xlsxEnrollData);
   }
 
-  async getAccessCode() {
+  async generateXlsxWithAccessCode(): Promise<string> {
     // DB에서 미가입된 유저들의 목록을 받아옴
     const userList = await this.userRepository.getNotJoinedUserList();
+    console.log(userList);
 
     // 승인코드 생성
     const userAccessCodeList = userList.map((user) => {
       const { name, studentId, phone, position } = user;
-      const accessCode = crypto
-        .createHash('sha512')
-        .update(studentId + this.config.get<string>('ACCESS_CODE_SALT'))
-        .digest('hex');
+      const accessCode = this.generateAccessCode(studentId);
       const convertedPhone = '0' + phone.substring(3);
-
       return { 이름: name, 학번: studentId, 전화번호: convertedPhone, 포지션: position, 승인코드: accessCode };
     });
 
@@ -89,5 +86,12 @@ export class UserService {
     });
 
     return xlsxFile;
+  }
+
+  generateAccessCode(studentId: number): string {
+    return crypto
+      .createHash('sha512')
+      .update(studentId + this.config.get<string>('ACCESS_CODE_SALT'))
+      .digest('hex');
   }
 }
