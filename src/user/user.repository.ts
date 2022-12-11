@@ -14,7 +14,7 @@ export class UserRepository {
   async getNotJoinedUserList(): Promise<User[]> {
     return this.prisma.user.findMany({
       where: {
-        userAccount: undefined,
+        userAccount: null,
       },
     });
   }
