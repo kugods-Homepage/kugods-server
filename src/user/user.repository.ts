@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { PrismaService } from '../common/services/prisma.service';
 import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 
@@ -8,5 +9,13 @@ export class UserRepository {
 
   async enroll(data: XlsxEnrollDao[]): Promise<void> {
     await this.prisma.user.createMany({ data: data, skipDuplicates: true });
+  }
+
+  async getNotJoinedUserList(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: {
+        userAccount: null,
+      },
+    });
   }
 }
