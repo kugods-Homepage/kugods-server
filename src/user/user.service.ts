@@ -10,7 +10,7 @@ import { UserPosition } from './types/user-position.enum';
 import { validate } from 'class-validator';
 import * as crypto from 'crypto';
 import { JoinDto } from './dto/join.dto';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
