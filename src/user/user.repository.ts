@@ -28,15 +28,13 @@ export class UserRepository {
     });
   }
 
-  /*
-  async joinEnrolledUser(email: string, password: string) {
+  async joinEnrolledUser(userId: string, email: string, password: string) {
     return this.prisma.userAccount.create({
       data: {
-        user: 
+        userId,
         email,
         password,
       },
     });
   }
-  */
 }
