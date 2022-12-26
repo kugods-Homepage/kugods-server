@@ -47,4 +47,12 @@ export class UserController {
   async generateXlsxWithAccessCode(): Promise<string> {
     return this.userService.generateXlsxWithAccessCode();
   }
+
+  @ApiOperation({ summary: '기등록된 회원들을 회원가입 시킴' })
+  @ApiCreatedResponse()
+  @HttpCode(201)
+  @Post('/join')
+  async joinEnrolledUser() {
+    return this.userService.joinEnrolledUser();
+  }
 }

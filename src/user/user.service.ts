@@ -94,4 +94,8 @@ export class UserService {
       .update(studentId + this.config.get<string>('ACCESS_CODE_SALT'))
       .digest('hex');
   }
+
+  async joinEnrolledUser() {
+    return;
+  }
 }
