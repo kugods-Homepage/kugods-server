@@ -65,7 +65,6 @@ export class UserService {
   async generateXlsxWithAccessCode(): Promise<string> {
     // DB에서 미가입된 유저들의 목록을 받아옴
     const userList = await this.userRepository.getNotJoinedUserList();
-    console.log(userList);
 
     // 승인코드 생성
     const userAccessCodeList = userList.map((user) => {
