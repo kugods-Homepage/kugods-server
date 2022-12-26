@@ -9,8 +9,6 @@ import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 import { UserPosition } from './types/user-position.enum';
 import { validate } from 'class-validator';
 import * as crypto from 'crypto';
-import { JoinDto } from './dto/join.dto';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -95,26 +93,5 @@ export class UserService {
       .createHash('sha512')
       .update(studentId + this.config.get<string>('ACCESS_CODE_SALT'))
       .digest('hex');
-  }
-
-  async joinEnrolledUser(joinDto: JoinDto) {
-    const { email, password, studentId, accessCode } = joinDto;
-    // 승인코드 확인
-    if (this.generateAccessCode(studentId) !== accessCode) {
-      throw new UnauthorizedException({
-        statusCode: 401,
-        message: `승인코드가 학번과 일치하지 않습니다.`,
-        error: 'Unauthorized',
-      });
-    }
-
-    // userId 받아오기
-    const { id: userId } = await this.userRepository.getUserIdByStudentId(studentId);
-
-    // password 암호화
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // DB에 등록
-    return this.userRepository.joinEnrolledUser(userId, email, hashedPassword);
   }
 }

@@ -1,26 +1,31 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JoinDto } from '../auth/dto/join.dto';
+import * as bcrypt from 'bcrypt';
+import { UserRepository } from 'src/user/user.repository';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(private readonly userRepository: UserRepository, private readonly userService: UserService) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async joinEnrolledUser(joinDto: JoinDto) {
+    const { email, password, studentId, accessCode } = joinDto;
+    // 승인코드 확인
+    if (this.userService.generateAccessCode(studentId) !== accessCode) {
+      throw new UnauthorizedException({
+        statusCode: 401,
+        message: `승인코드가 학번과 일치하지 않습니다.`,
+        error: 'Unauthorized',
+      });
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    // userId 받아오기
+    const { id: userId } = await this.userRepository.getUserIdByStudentId(studentId);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    // password 암호화
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    // DB에 등록
+    return this.userRepository.joinEnrolledUser(userId, email, hashedPassword);
   }
 }

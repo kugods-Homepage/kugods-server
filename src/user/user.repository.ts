@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from '../common/services/prisma.service';
 import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
-import { JoinDto } from './dto/join.dto';
+import { JoinDto } from '../auth/dto/join.dto';
 
 @Injectable()
 export class UserRepository {

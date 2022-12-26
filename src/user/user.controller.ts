@@ -5,7 +5,6 @@ import { UserService } from './user.service';
 import { TestDto } from './dto/test.dto';
 import { TestPayload } from './payload/test.payload';
 import { xlsxEnrollOption } from 'src/utils/multer/xlsx-enroll.option';
-import { JoinDto } from './dto/join.dto';
 
 @ApiTags('User API')
 @Controller('user')
@@ -47,13 +46,5 @@ export class UserController {
   @Get('/access-code')
   async generateXlsxWithAccessCode(): Promise<string> {
     return this.userService.generateXlsxWithAccessCode();
-  }
-
-  @ApiOperation({ summary: '기등록된 회원들을 회원가입 처리함' })
-  @ApiCreatedResponse()
-  @HttpCode(201)
-  @Post('/join')
-  async joinEnrolledUser(@Body() joinDto: JoinDto) {
-    return this.userService.joinEnrolledUser(joinDto);
   }
 }
