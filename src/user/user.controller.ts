@@ -5,6 +5,7 @@ import { UserService } from './user.service';
 import { TestDto } from './dto/test.dto';
 import { TestPayload } from './payload/test.payload';
 import { xlsxEnrollOption } from 'src/utils/multer/xlsx-enroll.option';
+import { JoinDto } from './dto/join.dto';
 
 @ApiTags('User API')
 @Controller('user')
@@ -52,7 +53,7 @@ export class UserController {
   @ApiCreatedResponse()
   @HttpCode(201)
   @Post('/join')
-  async joinEnrolledUser() {
-    return this.userService.joinEnrolledUser();
+  async joinEnrolledUser(@Body() joinDto: JoinDto) {
+    return this.userService.joinEnrolledUser(joinDto);
   }
 }
