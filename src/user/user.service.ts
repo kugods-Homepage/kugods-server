@@ -108,11 +108,13 @@ export class UserService {
       });
     }
 
-    /*
-    //isAdmin은 LEAD가 직접 정해주는 거로 한다. -> 첫 가입 시 항상 false
+    // userId 받아오기
+    const { id: userId } = await this.userRepository.getUserIdByStudentId(studentId);
+
+    // password 암호화
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    return this.userRepository.joinEnrolledUser(email, hashedPassword);
-    */
+    // DB에 등록
+    return this.userRepository.joinEnrolledUser(userId, email, hashedPassword);
   }
 }
