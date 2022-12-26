@@ -11,10 +11,10 @@ export class XlsxEnrollDao {
     }
     this.phone = '+82' + phone.substring(1);
     this.position = position;
-    if(typeof generation !== 'number') {
+    if (typeof generation !== 'number') {
       throw new BadRequestException('기수가 양식에 맞지 않습니다.');
     }
-    this.generation = Math.pow(2, generation-1);
+    this.generation = Math.pow(2, generation - 1);
   }
 
   @IsString()
