@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JoinDto } from 'src/auth/dto/join.dto';
+import { JoinPayload } from 'src/auth/payload/join.payload';
 import { AuthService } from './auth.service';
 
 @ApiTags('Auth API')
@@ -12,7 +12,7 @@ export class AuthController {
   @ApiCreatedResponse()
   @HttpCode(201)
   @Post('/join')
-  async joinEnrolledUser(@Body() joinDto: JoinDto) {
-    return this.authService.joinEnrolledUser(joinDto);
+  async joinEnrolledUser(@Body() payload: JoinPayload) {
+    return this.authService.joinEnrolledUser(payload);
   }
 }

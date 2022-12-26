@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JoinDto } from '../auth/dto/join.dto';
+import { JoinPayload } from './payload/join.payload';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/user/user.repository';
 import { UserService } from 'src/user/user.service';
@@ -8,8 +8,8 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
   constructor(private readonly userRepository: UserRepository, private readonly userService: UserService) {}
 
-  async joinEnrolledUser(joinDto: JoinDto) {
-    const { email, password, studentId, accessCode } = joinDto;
+  async joinEnrolledUser(payload: JoinPayload) {
+    const { email, password, studentId, accessCode } = payload;
     // 승인코드 확인
     if (this.userService.generateAccessCode(studentId) !== accessCode) {
       throw new UnauthorizedException({
