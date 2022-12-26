@@ -49,7 +49,7 @@ export class UserController {
     return this.userService.generateXlsxWithAccessCode();
   }
 
-  @ApiOperation({ summary: '기등록된 회원들을 회원가입 시킴' })
+  @ApiOperation({ summary: '기등록된 회원들을 회원가입 처리함' })
   @ApiCreatedResponse()
   @HttpCode(201)
   @Post('/join')
