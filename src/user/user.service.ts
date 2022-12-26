@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from './user.repository';
 import { TestPayload } from './payload/test.payload';
@@ -9,6 +9,8 @@ import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 import { UserPosition } from './types/user-position.enum';
 import { validate } from 'class-validator';
 import * as crypto from 'crypto';
+import { JoinDto } from './dto/join.dto';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -95,7 +97,22 @@ export class UserService {
       .digest('hex');
   }
 
-  async joinEnrolledUser() {
-    return;
+  async joinEnrolledUser(joinDto: JoinDto) {
+    const { email, password, studentId, accessCode } = joinDto;
+    // 승인코드 확인
+    if (this.generateAccessCode(studentId) !== accessCode) {
+      throw new UnauthorizedException({
+        statusCode: 401,
+        message: `승인코드가 학번과 일치하지 않습니다.`,
+        error: 'Unauthorized',
+      });
+    }
+
+    /*
+    //isAdmin은 LEAD가 직접 정해주는 거로 한다. -> 첫 가입 시 항상 false
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    return this.userRepository.joinEnrolledUser(email, hashedPassword);
+    */
   }
 }
