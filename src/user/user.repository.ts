@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { User, UserAccount } from '@prisma/client';
 import { PrismaService } from '../common/services/prisma.service';
 import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 
@@ -19,10 +19,18 @@ export class UserRepository {
     });
   }
 
-  async getUserIdByStudentId(studentId: number): Promise<User> {
+  async getUserByStudentId(studentId: number): Promise<User> {
     return this.prisma.user.findUnique({
       where: {
         studentId,
+      },
+    });
+  }
+
+  async getUserAccountByEmail(email: string): Promise<UserAccount> {
+    return this.prisma.userAccount.findUnique({
+      where: {
+        email,
       },
     });
   }
