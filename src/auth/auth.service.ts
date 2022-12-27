@@ -10,9 +10,8 @@ import { UserService } from 'src/user/user.service';
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly userService: UserService,
-  ) //private readonly jwtService: JwtService,
-  {}
+    private readonly userService: UserService, //private readonly jwtService: JwtService,
+  ) {}
 
   async joinEnrolledUser(payload: JoinMemberPayload) {
     const { email, password, studentId, accessCode } = payload;
@@ -23,10 +22,11 @@ export class AuthService {
       });
     }
 
-    // 기가입된 계정 오류 처리
-    if (this.userRepository.getUserAccountByEmail(email)) {
+    // 기가입된 학번 오류 처리
+    const exAccount = (await this.userRepository.getUserAccountByStudentId(studentId)).userAccount;
+    if (exAccount) {
       throw new ConflictException({
-        message: `이미 가입된 이메일입니다.`,
+        message: `이미 가입된 학번입니다.`,
       });
     }
 

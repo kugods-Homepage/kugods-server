@@ -27,6 +27,17 @@ export class UserRepository {
     });
   }
 
+  async getUserAccountByStudentId(studentId: number): Promise<User & { userAccount: UserAccount }> {
+    return this.prisma.user.findUnique({
+      where: {
+        studentId,
+      },
+      include: {
+        userAccount: true,
+      },
+    });
+  }
+
   async getUserAccountByEmail(email: string): Promise<UserAccount> {
     return this.prisma.userAccount.findUnique({
       where: {
