@@ -4,15 +4,15 @@ import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/user/user.repository';
 import { UserService } from 'src/user/user.service';
 //import { LoginPayload } from './payload/login.payload';
-import { JwtService } from '@nestjs/jwt';
+//import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-  ) {}
+  ) //private readonly jwtService: JwtService,
+  {}
 
   async joinEnrolledUser(payload: JoinMemberPayload) {
     const { email, password, studentId, accessCode } = payload;
