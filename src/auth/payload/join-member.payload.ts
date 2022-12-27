@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsEmail, IsNotEmpty, IsNumber, IsString, Max, Min } from 'class-validator';
 
-export class JoinPayload {
+export class JoinMemberPayload {
   @ApiProperty({ type: String })
   @IsDefined()
   @IsNotEmpty()
