@@ -35,7 +35,7 @@ export class UserRepository {
     });
   }
 
-  async joinEnrolledUser(userId: string, email: string, password: string) {
+  async joinEnrolledUser(userId: string, email: string, password: string): Promise<UserAccount> {
     return this.prisma.userAccount.create({
       data: {
         userId,
