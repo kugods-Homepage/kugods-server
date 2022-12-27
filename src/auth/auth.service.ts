@@ -35,6 +35,6 @@ export class AuthService {
     // password 암호화
     const hashedPassword = await bcrypt.hash(password, 12);
     // DB에 등록
-    return this.userRepository.joinEnrolledUser(userId, email, hashedPassword);
+    this.userRepository.joinEnrolledUser(userId, email, hashedPassword);
   }
 }
