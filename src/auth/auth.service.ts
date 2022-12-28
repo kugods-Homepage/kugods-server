@@ -3,14 +3,15 @@ import { JoinMemberPayload } from './payload/join-member.payload';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from 'src/user/user.repository';
 import { UserService } from 'src/user/user.service';
-//import { LoginPayload } from './payload/login.payload';
-//import { JwtService } from '@nestjs/jwt';
+import { LoginPayload } from './payload/login.payload';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly userService: UserService, //private readonly jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async joinEnrolledUser(payload: JoinMemberPayload) {
@@ -36,5 +37,26 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 12);
     // DB에 등록
     this.userRepository.joinEnrolledUser(userId, email, hashedPassword);
+  }
+
+  async login(payload: LoginPayload) {
+    const { email, password } = payload;
+
+    // userAccount 받아오기 및 유저 확인
+    const userAccount = await this.userRepository.getUserAccountByEmail(email);
+    if (!userAccount) {
+      throw new NotFoundException();
+    }
+
+    // 패스워드 확인
+    const isMachted = await bcrypt.compare(password, userAccount.password);
+    if (!isMachted) {
+      throw new UnauthorizedException();
+    }
+
+    // JWT 토큰 발행
+    return this.jwtService.sign({
+      email: userAccount.email,
+    });
   }
 }
