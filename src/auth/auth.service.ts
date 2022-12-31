@@ -18,17 +18,13 @@ export class AuthService {
     const { email, password, studentId, accessCode } = payload;
     // 승인코드 확인
     if (this.userService.generateAccessCode(studentId) !== accessCode) {
-      throw new UnauthorizedException({
-        message: `승인코드가 학번과 일치하지 않습니다.`,
-      });
+      throw new UnauthorizedException(`승인코드가 학번과 일치하지 않습니다.`);
     }
 
     // 기가입된 학번 오류 처리
     const exAccount = (await this.userRepository.getUserAccountByStudentId(studentId)).userAccount;
     if (exAccount) {
-      throw new ConflictException({
-        message: `이미 가입된 학번입니다.`,
-      });
+      throw new ConflictException(`이미 가입된 학번입니다.`);
     }
 
     // userId 받아오기
@@ -45,13 +41,13 @@ export class AuthService {
     // userAccount 받아오기 및 유저 확인
     const userAccount = await this.userRepository.getUserAccountByEmail(email);
     if (!userAccount) {
-      throw new NotFoundException();
+      throw new NotFoundException(`존재하지 않는 이메일입니다.`);
     }
 
     // 패스워드 확인
     const isMachted = await bcrypt.compare(password, userAccount.password);
     if (!isMachted) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('비밀번호가 틀렸습니다.');
     }
 
     // JWT 토큰 발행
