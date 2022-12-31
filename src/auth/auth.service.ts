@@ -55,8 +55,9 @@ export class AuthService {
     }
 
     // JWT 토큰 발행
-    return this.jwtService.sign({
+    const accessToken = this.jwtService.sign({
       email: userAccount.email,
     });
+    return { accessToken };
   }
 }
