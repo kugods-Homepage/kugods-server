@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { UserService } from 'src/user/user.service';
-import { UserRepository } from 'src/user/user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthRepository } from './auth.repository';
 
 @Module({
   imports: [
@@ -19,7 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, UserService, UserRepository],
+  providers: [AuthService, AuthRepository],
   controllers: [AuthController],
 })
 export class AuthModule {}
