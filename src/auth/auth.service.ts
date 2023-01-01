@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ConsoleLogger,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -16,6 +17,7 @@ import * as XLSX from 'xlsx';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
+import { CheckEmailPayload } from './payload/check-email.payload';
 
 @Injectable()
 export class AuthService {
@@ -121,6 +123,14 @@ export class AuthService {
       email: userAccount.email,
     });
     return { accessToken };
+  }
+
+  async checkEmailDuplicate(payload: CheckEmailPayload): Promise<void> {
+    const { email } = payload;
+    const exUser = await this.authRepository.getUserAccountByEmail(email);
+    if (exUser) {
+      throw new ConflictException('이미 존재하는 이메일입니다.');
+    }
   }
 
   generateAccessCode(studentId: number): string {
