@@ -9,6 +9,7 @@ import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 import { UserPosition } from './types/user-position.enum';
 import { validate } from 'class-validator';
 import * as crypto from 'crypto';
+import { User, UserAccount } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -92,5 +93,21 @@ export class UserService {
       .createHash('sha512')
       .update(studentId + this.config.get<string>('ACCESS_CODE_SALT'))
       .digest('hex');
+  }
+
+  async getUserAccountByStudentId(studentId: number): Promise<User & { userAccount: UserAccount }> {
+    return this.userRepository.getUserAccountByStudentId(studentId);
+  }
+
+  async getUserByStudentId(studentId: number): Promise<User> {
+    return this.userRepository.getUserByStudentId(studentId);
+  }
+
+  async joinEnrolledUser(userId: string, email: string, password: string): Promise<UserAccount> {
+    return this.userRepository.joinEnrolledUser(userId, email, password);
+  }
+
+  async getUserAccountByEmail(email: string): Promise<UserAccount> {
+    return this.getUserAccountByEmail(email);
   }
 }
