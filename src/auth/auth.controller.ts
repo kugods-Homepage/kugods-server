@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, Param, UseInterceptors, UploadedFile, Get } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, UseInterceptors, UploadedFile, Get, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JoinMemberPayload } from 'src/auth/payload/join-member.payload';
@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LoginPayload } from './payload/login.payload';
 import { xlsxEnrollOption } from 'src/utils/multer/xlsx-enroll.option';
+import { CheckEmailPayload } from './payload/check-email.payload';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -27,7 +28,7 @@ export class AuthController {
   })
   @ApiCreatedResponse()
   @HttpCode(201)
-  @Post('/xlsx')
+  @Post('/enroll')
   @UseInterceptors(FileInterceptor('file', xlsxEnrollOption))
   async enrollByXlsx(@UploadedFile() file: Express.Multer.File): Promise<void> {
     return this.authService.enrollByXlsx(file);
@@ -55,5 +56,13 @@ export class AuthController {
   @Post('/login')
   async login(@Body() payload: LoginPayload): Promise<LoginDto> {
     return this.authService.login(payload);
+  }
+
+  @ApiOperation({ summary: '이메일 중복 체크' })
+  @ApiOkResponse()
+  @HttpCode(200)
+  @Post('/email')
+  async checkEmailDuplicate(@Body() payload: CheckEmailPayload): Promise<void> {
+    return this.authService.checkEmailDuplicate(payload);
   }
 }
