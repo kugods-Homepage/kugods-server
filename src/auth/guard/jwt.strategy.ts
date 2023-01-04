@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     const { email } = jwtToken;
     const user = await this.authRepository.getUserByEmail(email);
     if (!user) {
-      throw new UnauthorizedException('JWT 토큰이 유효하지 않습니다.');
+      throw new UnauthorizedException();
     }
     return user;
   }
