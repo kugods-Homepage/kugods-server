@@ -1,16 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  UseInterceptors,
-  UploadedFile,
-  Get,
-  Query,
-  UseGuards,
-  Req,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, UseInterceptors, UploadedFile, Get, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
@@ -28,7 +16,7 @@ import { LoginPayload } from './payload/login.payload';
 import { xlsxEnrollOption } from 'src/utils/multer/xlsx-enroll.option';
 import { CheckEmailPayload } from './payload/check-email.payload';
 import { JwtAuthGuard } from './guard/jwt-atuh.guard';
-import { User } from '@prisma/client';
+import { AdminGuard } from './guard/admin.guard';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -50,31 +38,21 @@ export class AuthController {
     },
   })
   @ApiCreatedResponse()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @HttpCode(201)
   @Post('/enroll')
   @UseInterceptors(FileInterceptor('file', xlsxEnrollOption))
-  async enrollByXlsx(@UploadedFile() file: Express.Multer.File, @Req() req): Promise<void> {
-    const user: User & { isAdmin: boolean } = req.user;
-    if (!user.isAdmin || !user.isActive) {
-      throw new ForbiddenException('현재 활동중인 쿠갓즈 운영진만 가능한 기능입니다.');
-    }
-
+  async enrollByXlsx(@UploadedFile() file: Express.Multer.File): Promise<void> {
     return this.authService.enrollByXlsx(file);
   }
 
   @ApiOperation({ summary: '유저들의 승인코드가 담긴 xlsx파일을 base64형태로 생성해서 내려줌' })
   @ApiBearerAuth()
   @ApiOkResponse()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @HttpCode(200)
   @Get('/access-code')
-  async generateXlsxWithAccessCode(@Req() req): Promise<string> {
-    const user: User & { isAdmin: boolean } = req.user;
-    if (!user.isAdmin || !user.isActive) {
-      throw new ForbiddenException('현재 활동중인 쿠갓즈 운영진만 가능한 기능입니다.');
-    }
-
+  async generateXlsxWithAccessCode(): Promise<string> {
     return this.authService.generateXlsxWithAccessCode();
   }
 
