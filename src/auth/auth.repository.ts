@@ -46,6 +46,19 @@ export class AuthRepository {
     });
   }
 
+  async getUserByEmail(email: string): Promise<User> {
+    return (
+      await this.prisma.userAccount.findUnique({
+        where: {
+          email,
+        },
+        select: {
+          user: true,
+        },
+      })
+    ).user;
+  }
+
   async joinEnrolledUser(userId: string, email: string, password: string): Promise<UserAccount> {
     return this.prisma.userAccount.create({
       data: {
