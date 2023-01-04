@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { User, UserAccount } from '@prisma/client';
-import { userInfo } from 'os';
 import { PrismaService } from '../common/services/prisma.service';
 import { XlsxEnrollDao } from './dao/xlsx-enroll.dao';
 
@@ -57,9 +56,11 @@ export class AuthRepository {
         isAdmin: true,
       },
     });
-    const { user, isAdmin } = data;
-    const returnData = Object.assign(user, { isAdmin: isAdmin });
-    return returnData;
+
+    if (data !== null) {
+      const { user, isAdmin } = data;
+      return Object.assign(user, { isAdmin: isAdmin });
+    }
   }
 
   async joinEnrolledUser(userId: string, email: string, password: string): Promise<UserAccount> {
