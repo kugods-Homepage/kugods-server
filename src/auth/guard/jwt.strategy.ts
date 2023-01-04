@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtTokenType } from '../types/jwt-token.type';
+import { TokenData } from '../types/jwt-token.type';
 import { AuthRepository } from '../auth.repository';
 import { User } from '@prisma/client';
 
@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(jwtToken: JwtTokenType): Promise<User & { isAdmin: boolean }> {
+  async validate(jwtToken: TokenData): Promise<User & { isAdmin: boolean }> {
     const { email } = jwtToken;
     const user = await this.authRepository.getUserByEmail(email);
     if (!user) {

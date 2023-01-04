@@ -1,3 +1,3 @@
-export type JwtTokenType = {
+export type TokenData = {
   email: string;
 };
