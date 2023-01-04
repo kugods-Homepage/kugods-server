@@ -1,4 +1,16 @@
-import { Controller, Post, Body, HttpCode, UseInterceptors, UploadedFile, Get, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  UseInterceptors,
+  UploadedFile,
+  Get,
+  Query,
+  UseGuards,
+  Req,
+  ForbiddenException,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
@@ -16,6 +28,7 @@ import { LoginPayload } from './payload/login.payload';
 import { xlsxEnrollOption } from 'src/utils/multer/xlsx-enroll.option';
 import { CheckEmailPayload } from './payload/check-email.payload';
 import { JwtAuthGuard } from './guard/jwt-atuh.guard';
+import { User } from '@prisma/client';
 
 @ApiTags('Auth API')
 @Controller('auth')
@@ -41,7 +54,12 @@ export class AuthController {
   @HttpCode(201)
   @Post('/enroll')
   @UseInterceptors(FileInterceptor('file', xlsxEnrollOption))
-  async enrollByXlsx(@UploadedFile() file: Express.Multer.File): Promise<void> {
+  async enrollByXlsx(@UploadedFile() file: Express.Multer.File, @Req() req): Promise<void> {
+    const user: User & { isAdmin: boolean } = req.user;
+    if (!user.isAdmin || !user.isActive) {
+      throw new ForbiddenException('현재 활동중인 쿠갓즈 운영진만 가능한 기능입니다.');
+    }
+
     return this.authService.enrollByXlsx(file);
   }
 
@@ -51,7 +69,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(200)
   @Get('/access-code')
-  async generateXlsxWithAccessCode(): Promise<string> {
+  async generateXlsxWithAccessCode(@Req() req): Promise<string> {
+    const user: User & { isAdmin: boolean } = req.user;
+    if (!user.isAdmin || !user.isActive) {
+      throw new ForbiddenException('현재 활동중인 쿠갓즈 운영진만 가능한 기능입니다.');
+    }
+
     return this.authService.generateXlsxWithAccessCode();
   }
 

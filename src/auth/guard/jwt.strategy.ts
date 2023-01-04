@@ -4,6 +4,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtTokenType } from '../types/jwt-token.type';
 import { AuthRepository } from '../auth.repository';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -15,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(jwtToken: JwtTokenType): Promise<any> {
+  async validate(jwtToken: JwtTokenType): Promise<User & { isAdmin: boolean }> {
     const { email } = jwtToken;
     const user = await this.authRepository.getUserByEmail(email);
     if (!user) {
