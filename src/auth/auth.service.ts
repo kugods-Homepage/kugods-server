@@ -101,7 +101,9 @@ export class AuthService {
 
     // DB에 등록
     const { id: userId } = await this.authRepository.getUserByStudentId(studentId);
-    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const salt = await bcrypt.genSalt(this.config.get<number>('BCRYPT_SALT_ROUND'));
+    const hashedPassword = await bcrypt.hash(password, salt);
     this.authRepository.joinEnrolledUser(userId, email, hashedPassword);
   }
 
