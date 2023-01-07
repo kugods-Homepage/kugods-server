@@ -46,6 +46,23 @@ export class AuthRepository {
     });
   }
 
+  async getUserByEmail(email: string): Promise<User & { isAdmin: boolean }> {
+    const data = await this.prisma.userAccount.findUnique({
+      where: {
+        email,
+      },
+      select: {
+        user: true,
+        isAdmin: true,
+      },
+    });
+
+    if (data !== null) {
+      const { user, isAdmin } = data;
+      return Object.assign(user, { isAdmin: isAdmin });
+    }
+  }
+
   async joinEnrolledUser(userId: string, email: string, password: string): Promise<UserAccount> {
     return this.prisma.userAccount.create({
       data: {
